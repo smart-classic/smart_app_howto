@@ -15,14 +15,7 @@ def get_smart_client(resource_tokens=None):
 
   return smart_client
 
-def print_drugnames():
-  """
-  map a function onto every record
-  """
-  smart_client = get_smart_client()
-
-  for record_id in smart_client.loop_over_records():
-    query = """
+QUERY = """
         PREFIX dcterms:<http://purl.org/dc/terms/>
         PREFIX sp:<http://smartplatforms.org/terms#>
         PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -34,9 +27,16 @@ def print_drugnames():
         }
         """
 
+def print_drugnames():
+  """
+  map a function onto every record
+  """
+  smart_client = get_smart_client()
+
+  for record_id in smart_client.loop_over_records():
     medications = smart_client.records_X_medications_GET(record_id = record_id)
-    med_names = medications.query(query)
-    print "%s: %s" % (record_id, med_names)
+    med_names = medications.query(QUERY)
+    print "%s: %s" % (record_id, ", ".join([str(m) for m in med_names]))
 
 def run():
   print_drugnames()
